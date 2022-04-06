@@ -1,9 +1,6 @@
 import qualified Data.Map as Map
 import qualified Data.Map.Internal.Debug as MapD
 
-frequency :: (Ord a) => [a] -> [(a, Int)]
-frequency xs = Map.toList (Map.fromListWith (+) [(x, 1) | x <- xs])
-
 isHead' :: String -> String -> String -> Bool
 isHead' str [] ret = True
 isHead' [] key ret = False
@@ -29,17 +26,15 @@ split c xs = case break (== c) xs of
   (ls, "") -> [ls]
   (ls, x : rs) -> ls : split c rs
 
+fromLIstToTuple:: [a] -> (a,a)
+fromLIstToTuple (x:y:_) = (x,y)
+
+mkLine :: [String] -> Line
+-- mkLine (a : b : c : d : xs) = Line (Point (read a :: Int) (read b :: Int)) (Point (read c :: Int) (read d :: Int))
+mkLine (a : b : c : d : xs) = Line (Point (read a) (read b)) (Point (read c) (read d))
+
 data Point = Point Int Int deriving (Show, Eq, Ord)
 data Line = Line Point Point deriving (Show, Eq)
-
-getDiagLine :: Line -> [Point]
-getDiagLine (Line (Point a b) (Point c d)) =
-  zipWith Point (getRs a c) (getRs b d)
- where
-  getRs x1 x2 =
-    if x1 > x2
-      then [x1, x1 - 1 .. x2]
-      else [x1 .. x2]
 
 lineToPoints :: Line -> [Point]
 lineToPoints (Line (Point a b) (Point c d))
@@ -52,13 +47,34 @@ lineToPoints (Line (Point a b) (Point c d))
   | a == c && b == d = [Point a b]
 lineToPoints (Line (Point _ _) (Point _ _)) = []
 
-mkLine :: [String] -> Line
--- mkLine (a : b : c : d : xs) = Line (Point (read a :: Int) (read b :: Int)) (Point (read c :: Int) (read d :: Int))
-mkLine (a : b : c : d : xs) = Line (Point (read a) (read b)) (Point (read c) (read d))
+frequency :: (Ord a) => [a] -> [(a, Int)]
+frequency xs = Map.toList (Map.fromListWith (+) [(x, 1) | x <- xs])
+
+getDiagLine :: Line -> [Point]
+getDiagLine (Line (Point a b) (Point c d)) =
+  zipWith Point (getRs a c) (getRs b d)
+ where
+  getRs x1 x2 =
+    if x1 > x2
+      then [x1, x1 - 1 .. x2]
+      else [x1 .. x2]
+
+
 
 main :: IO ()
-main = do
-  contents <- readFile "./input.txt"
-  let points = concatMap (lineToPoints . mkLine . split ',' . replace " -> " ",") $ lines contents
-  let freqs = length . filter (\(_, times) -> times > 1) . frequency $ points
-  print freqs
+main = do 
+    -- contents <- readFile "example.txt"
+    -- let result = concat . map ( lineToPoints . mkLine . split ',' . replace " -> " "," ) $ lines contents  
+    -- let freqs = length . filter (\(_, times) -> times > 1) . frequency $ result
+    -- print freqs
+    let a = fmap (+ 1) ( Just 5 )
+    print a
+    let b = fmap (+ 1) ( Nothing )
+    print b
+    let c = fmap (+ 1) [1,2,3]
+    print c
+    let e = fmap (+ 1) (Left "dfdfdfdfdf")
+    print e
+    -- let ss = fmap (+ 1) ( Right 1 )
+ 
+
