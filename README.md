@@ -1,2 +1,1 @@
-# aoc21
-Advenct of Code 2021 in Haskell
+# Learning haskell by solving aoc 21
